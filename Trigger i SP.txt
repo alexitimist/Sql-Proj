@@ -1,0 +1,25 @@
+CREATE TRIGGER sprawdz_date
+BEFORE INSERT ON Wypozyczenie
+FOR EACH ROW
+BEGIN
+  IF (NEW.koniec < NEW.poczatek) THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Zla Data! Koniec<Poczatek';
+  END IF;
+END;
+
+;;
+delimiter ;
+
+delimiter ;;
+CREATE PROCEDURE czytelnicy_wy()
+BEGIN
+SELECT CONCAT_WS(', ', nazwisko, imie) as 'Czytelnik z wypozyczeniem' from Czytelnik WHERE wypozyczenie=true;
+END ;;
+delimiter ;
+
+delimiter ;;
+CREATE PROCEDURE czytelnicy_bez_wy()
+BEGIN
+SELECT CONCAT_WS(', ', nazwisko, imie) as 'Czytelnik bez wypozyczenia' from Czytelnik WHERE wypozyczenie=false;
+END ;;
+delimiter ;
